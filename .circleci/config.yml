@@ -5,34 +5,32 @@ jobs:
     docker:
       - image: circleci/node:17.2.0
     steps:
-      - run: npm install && npm run lint
+      - checkout
+      - run: npm i
+      - run: npm run lint
 
   test:
     docker:
       - image: circleci/node:17.2.0
     steps:
+      - checkout
+      -run: npm i
       - run: npm run test
 
   analyse:
     docker:
       - image: circleci/node:17.2.0
     steps:
-      - run: npm run test
-
-  error_handler:
-    docker:
-      - image: circleci/node:17.2.0
-    steps:
-      - run: exit 1
-      - run: 
-          name: On Error
-          command:  echo "Check your build for errors"
-          when: on_fail
+      - checkout
+      - run: npm run audit
 
 workflows:
   react-slingshot-workflow:
     jobs:
       - build
-      - test
-      - analyse
-      - error_handler
+      - test: 
+          requires:
+            - build
+      - analyse:
+          requires:
+            - test
