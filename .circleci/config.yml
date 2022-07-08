@@ -1,0 +1,37 @@
+version: 2.1
+
+jobs:
+  build:
+    docker:
+      - image: circleci/node:17.2.0
+    steps:
+      - run: npm run lint
+
+  test:
+    docker:
+      - image: circleci/node:17.2.0
+    steps:
+      - run: npm run test
+
+  analyse:
+    docker:
+      - image: circleci/node:17.2.0
+    steps:
+      - run: npm run test
+
+  error_handler:
+    docker:
+      - image: circleci/node:17.2.0
+    steps:
+      - run: 
+          name: On Error
+          command:  echo "Check your build for errors"
+          when: on_fail
+
+workflows:
+  react-slingshot-workflow:
+    jobs:
+      - build
+      - test
+      - analyse
+      - error_handler
